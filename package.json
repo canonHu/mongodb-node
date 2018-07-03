@@ -1,0 +1,17 @@
+{
+  "name": "nj_parkelot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/canonHu/nj_parkelot.git",
+  "author": "canonHu <837513327@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "mongodb": "^3.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.16.3"
+  }
+}
