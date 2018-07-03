@@ -89,16 +89,6 @@ app.all('/123', (req, res) => {
     
 });
 
-
-// 开发模式
-// app.use(webpackDevMiddleware(compiler, {
-//     publicPath: config.output.publicPath
-// }));
-
-
-// 调用本地静态资源
-// app.use(express.static('dist'));
-
 //配置服务端口
 // // Serve the files on port 3000.
 app.listen(3000, () => {
