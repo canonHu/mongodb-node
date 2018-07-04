@@ -1,6 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 // mongodb
 const {
@@ -29,7 +33,7 @@ app.all('*', (req, res, next) => {
     next();
 });
 
-let lookData = (params, callback) => {
+const findData = (params, callback) => {
     // Use connect method to connect to the server
     MongoClient.connect(url, (err, client) => {
         assert.equal(null, err);
@@ -44,7 +48,7 @@ let lookData = (params, callback) => {
     });
 }
 
-let addData = (params, callback) => {
+const addData = (params, callback) => {
     MongoClient.connect(url, (err, client) => {
         assert.equal(null, err);
         console.log("Connected successfully to server");
@@ -54,39 +58,86 @@ let addData = (params, callback) => {
         insertDocuments(params, db, res => {
             callback(res);
             client.close();
-        })
+        });
     });
 }
 
-let deleteData = (params, flag, callback) => {
+const deleteData = (params, flag, callback) => {
     MongoClient.connect(url, (err, client) => {
         assert.equal(null, err);
-        console.log("Connected successfully to server");
 
         const db = client.db(dbName);
 
-        removeDocument(params, db, flag, () => {
-            findDocuments({}, db, res => {
-                callback(res);
-                client.close();
-            });
-        })
+        removeDocument(params, db, flag, res => {
+            callback(res);
+            client.close();
+        });
     });
 }
 
-//写个接口123
-app.all('/123', (req, res) => {
+const updateData = (params, flag, callback) => {
+    MongoClient.connect(url, (err, client) => {
+        assert.equal(null, err);
+
+        const db = client.db(dbName);
+
+        updateDocument(params, db, flag, res => {
+            callback(res);
+            client.close();
+        });
+    });
+}
+
+const indexData = (params, callback) => {
+    MongoClient.connect(url, (err, client) => {
+        assert.equal(null, err);
+
+        const db = client.db(dbName);
+
+        indexCollection(params, db, res => {
+            callback(res);
+            client.close();
+        });
+    });
+};
+
+// 查询接口findData
+app.all('/findData', (req, res) => {
     res.status(200);
-    // console.log(2)
-    deleteData({ a: 2 }, 'many', jsonData => {
-        res.json(jsonData);
-        // console.log(res)
-    })
-    // lookData({}, jsonData => {
-    //     res.json(jsonData)
-    // })
-    // let jsondata = lookData({ name: "weare2" });
-    
+    findData(req.body, jsonData => {
+        res.json(jsonData)
+    });
+});
+
+// 添加接口addData
+app.all('/addData', (req, res) => {
+    res.status(200);
+    addData(req.body, jsonData => {
+        res.json(jsonData)
+    });
+});
+
+// 删除接口deleteData
+app.all('/deleteData', (req, res) => {
+    res.status(200);
+    deleteData(req.body.data, req.body.flag, jsonData => {
+        res.json(jsonData)
+    });
+});
+
+// 更新接口updateData
+app.all('/updateData', (req, res) => {
+    res.status(200);
+    updateData(req.body, req.body.flag, jsonData => {
+        res.json(jsonData)
+    });
+});
+
+app.all('/indexData', (req, res) => {
+    res.status(200);
+    indexData({ a: 777 }, jsonData => {
+        res.json(jsonData)
+    });
 });
 
 //配置服务端口
