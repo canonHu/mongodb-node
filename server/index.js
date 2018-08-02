@@ -161,12 +161,21 @@ app.all('/uploadImages', (req, res) => {
             return;
         }
 
+        const sst = 'http://172.31.84.74:5000/';
+        const rel = 'http://www.canonhu.top:5000';
+
         let avatarName = fields.user + '.' + Math.random() + '.' + extName;
         newPath = form.uploadDir + avatarName;
         fs.renameSync(files.file.path, newPath);  //重命名
+        // addData([{
+        //     name: fields.user,
+        //     imageUrl: sst + 'images/' + avatarName
+        // }], jsonData => {
+        //     res.json(jsonData)
+        // });
         res.json({
             success: true,
-            data: newPath
+            data: sst + 'images/' + avatarName
         })
     });
 });
