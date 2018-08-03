@@ -66,26 +66,26 @@ const addData = (params, callback) => {
     });
 }
 
-const deleteData = (params, flag, callback) => {
+const deleteData = (params, callback) => {
     MongoClient.connect(url, (err, client) => {
         assert.equal(null, err);
 
         const db = client.db(dbName);
 
-        removeDocument(params, db, flag, res => {
+        removeDocument(params, db, res => {
             callback(res);
             client.close();
         });
     });
 }
 
-const updateData = (params, flag, callback) => {
+const updateData = (params, callback) => {
     MongoClient.connect(url, (err, client) => {
         assert.equal(null, err);
 
         const db = client.db(dbName);
 
-        updateDocument(params, db, flag, res => {
+        updateDocument(params, db, res => {
             callback(res);
             client.close();
         });
@@ -199,7 +199,7 @@ app.all('/addData', (req, res) => {
 // 删除接口deleteData
 app.all('/deleteData', (req, res) => {
     res.status(200);
-    deleteData(req.body.data, req.body.flag, jsonData => {
+    deleteData(req.body, jsonData => {
         res.json(jsonData)
     });
 });
@@ -207,7 +207,7 @@ app.all('/deleteData', (req, res) => {
 // 更新接口updateData
 app.all('/updateData', (req, res) => {
     res.status(200);
-    updateData(req.body, req.body.flag, jsonData => {
+    updateData(req.body, jsonData => {
         res.json(jsonData)
     });
 });
