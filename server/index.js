@@ -2,10 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const formidable = require('formidable');
 const fs = require('fs');
+const http = require('http');
 const TITLE = '文件上传示例';
 const uilty = '/Users/canonhu/demo/mengoDB/images/';
 
 const app = express();
+const httpServer = http.createServer(app)
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -221,7 +223,7 @@ app.all('/indexData', (req, res) => {
 
 //配置服务端口
 // // Serve the files on port 3000.
-app.listen(3000, () => {
+httpServer.listen(3000, () => {
     console.log('Example app listening on port 3000!\n');
 });
 
