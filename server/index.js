@@ -2,10 +2,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const formidable = require('formidable');
 const fs = require('fs');
+const https = require('https');
+const selfSigned = require('openssl-self-signed-certificate');
 const TITLE = '文件上传示例';
-const uilty = '/Users/canonhu/demo/mengoDB/images/';
+// const uilty = '/Users/canonhu/demo/mengoDB/images/';
+const uilty = 'C:/canonHu/server/images/';
+
+const options = {
+    key: selfSigned.key,
+    cert: selfSigned.cert
+};
 
 const app = express();
+const httpsServer = https.createServer(options, app);
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -18,14 +27,26 @@ const {
     insertDocuments,
     indexCollection
 } = require('./mongodb')
+
+// canonHome
+const {
+    findCanon,
+    updateCanon,
+    removCanon,
+    insertCanon,
+    indexCanon
+} = require('./canonHome')
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 // Connection URL
 const url = 'mongodb://localhost:27017';
 
-// Database Name
+// weare Database Name
 const dbName = 'site';
+
+// canonHome Database Name
+const canonDbName = 'canonhome'
 
 //设置跨域访问
 app.all('*', (req, res, next) => {
@@ -37,9 +58,63 @@ app.all('*', (req, res, next) => {
     next();
 });
 
+/**
+ * canonHome项目接口
+ * start
+ */
+
+const addCanonData = (params, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        const db = client.db(canonDbName);
+
+        insertCanon(params, db, res => {
+            callback(res);
+            client.close();
+        });
+    });
+}
+
+const findCanonData = (params, callback) => {
+    // Use connect method to connect to the server
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+
+        const db = client.db(canonDbName);
+
+        findCanon(params, db, res => {
+            callback(res);
+            client.close();
+        });
+    });
+}
+
+// 查询接口findData
+app.all('/list', (req, res) => {
+    res.status(200);
+    findCanonData(req.body, jsonData => {
+        res.json(jsonData)
+    });
+});
+
+app.all('/save',function(request,response){
+    console.log(111, request.body)
+    // var name=request.body.name;
+    // var data={ "success":true, "data": { "name":"hujianeng", "value":name } };
+    // response.json(data);
+});
+
+/**
+ * canonHome项目接口
+ * end
+ */
+
 const findData = (params, callback) => {
     // Use connect method to connect to the server
-    MongoClient.connect(url, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         assert.equal(null, err);
         console.log("Connected successfully to server");
 
@@ -53,7 +128,7 @@ const findData = (params, callback) => {
 }
 
 const addData = (params, callback) => {
-    MongoClient.connect(url, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         assert.equal(null, err);
         console.log("Connected successfully to server");
 
@@ -66,26 +141,26 @@ const addData = (params, callback) => {
     });
 }
 
-const deleteData = (params, flag, callback) => {
-    MongoClient.connect(url, (err, client) => {
+const deleteData = (params, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         assert.equal(null, err);
 
         const db = client.db(dbName);
 
-        removeDocument(params, db, flag, res => {
+        removeDocument(params, db, res => {
             callback(res);
             client.close();
         });
     });
 }
 
-const updateData = (params, flag, callback) => {
-    MongoClient.connect(url, (err, client) => {
+const updateData = (params, callback) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         assert.equal(null, err);
 
         const db = client.db(dbName);
 
-        updateDocument(params, db, flag, res => {
+        updateDocument(params, db, res => {
             callback(res);
             client.close();
         });
@@ -93,7 +168,7 @@ const updateData = (params, flag, callback) => {
 }
 
 const indexData = (params, callback) => {
-    MongoClient.connect(url, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         assert.equal(null, err);
 
         const db = client.db(dbName);
@@ -161,12 +236,21 @@ app.all('/uploadImages', (req, res) => {
             return;
         }
 
+        const sst = 'http://172.31.84.74:5000/';
+        const rel = 'http://www.canonhu.top:5000';
+
         let avatarName = fields.user + '.' + Math.random() + '.' + extName;
         newPath = form.uploadDir + avatarName;
         fs.renameSync(files.file.path, newPath);  //重命名
+        // addData([{
+        //     name: fields.user,
+        //     imageUrl: sst + 'images/' + avatarName
+        // }], jsonData => {
+        //     res.json(jsonData)
+        // });
         res.json({
             success: true,
-            data: newPath
+            data: sst + 'images/' + avatarName
         })
     });
 });
@@ -190,7 +274,7 @@ app.all('/addData', (req, res) => {
 // 删除接口deleteData
 app.all('/deleteData', (req, res) => {
     res.status(200);
-    deleteData(req.body.data, req.body.flag, jsonData => {
+    deleteData(req.body, jsonData => {
         res.json(jsonData)
     });
 });
@@ -198,7 +282,7 @@ app.all('/deleteData', (req, res) => {
 // 更新接口updateData
 app.all('/updateData', (req, res) => {
     res.status(200);
-    updateData(req.body, req.body.flag, jsonData => {
+    updateData(req.body, jsonData => {
         res.json(jsonData)
     });
 });
@@ -211,10 +295,12 @@ app.all('/indexData', (req, res) => {
 });
 
 //配置服务端口
-// // Serve the files on port 3000.
-app.listen(3000, () => {
-    console.log('Example app listening on port 3000!\n');
+// Serve the files on port 443.for https
+httpsServer.listen(443, () => {
+    console.log('Example app listening on port 443!\n');
 });
 
-
-
+// Serve the files on port 8080.for http
+// app.listen(80, () => {
+//     console.log('Example app listening on port 80!\n');
+// });

@@ -1,8 +1,8 @@
 const assert = require('assert');
 
-const findDocuments = function (params, db, callback) {
+const findCanon = function (params, db, callback) {
     // Get the documents collection
-    const collection = db.collection('weare');
+    const collection = db.collection('canon');
     // Find some documents
     collection.find(params).toArray(function (err, docs) {
         assert.equal(err, null);
@@ -10,9 +10,9 @@ const findDocuments = function (params, db, callback) {
     });
 }
 
-const updateDocument = function (params, db, callback) {
+const updateCanon = function (params, db, callback) {
     // Get the documents collection
-    const collection = db.collection('weare');
+    const collection = db.collection('canon');
     // Update document where a is 2, set b equal to 1
     if (params.length === 1) {
         collection.updateOne({ name: params[0].name, articleId: params[0].articleId }
@@ -32,10 +32,11 @@ const updateDocument = function (params, db, callback) {
     }
 }
 
-const insertDocuments = function (params, db, callback) {
+const insertCanon = function (params, db, callback) {
     // Get the documents collection
-    const collection = db.collection('weare');
+    const collection = db.collection('canon');
     // Insert some documents
+    console.log(11, params)
     collection.find({ name: params[0].name }).toArray(function (err, docs) {
         assert.equal(err, null);
         params[0].articleId = docs.length + 1;
@@ -58,9 +59,9 @@ const insertDocuments = function (params, db, callback) {
     });
 }
 
-const removeDocument = function (params, db, callback) {
+const removeCanon = function (params, db, callback) {
     // Get the documents collection
-    const collection = db.collection('weare');
+    const collection = db.collection('canon');
     // Delete document where a is 3
     if (params.length === 1) {
         collection.deleteOne(params[0], function (err, result) {
@@ -76,8 +77,8 @@ const removeDocument = function (params, db, callback) {
     }
 }
 
-const indexCollection = function (params, db, callback) {
-    db.collection('weare').createIndex(
+const indexCanon = function (params, db, callback) {
+    db.collection('canon').createIndex(
         params,
         null,
         function (err, results) {
@@ -88,9 +89,9 @@ const indexCollection = function (params, db, callback) {
 };
 
 module.exports = {
-    findDocuments,
-    updateDocument,
-    removeDocument,
-    insertDocuments,
-    indexCollection
+    findCanon,
+    updateCanon,
+    removeCanon,
+    insertCanon,
+    indexCanon
 }
