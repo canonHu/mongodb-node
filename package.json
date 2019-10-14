@@ -15,6 +15,7 @@
   "devDependencies": {
     "express": "^4.16.3",
     "formidable": "^1.2.1",
+    "loadtest": "^3.0.8",
     "openssl-self-signed-certificate": "^1.1.6"
   }
 }

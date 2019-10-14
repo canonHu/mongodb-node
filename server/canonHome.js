@@ -37,26 +37,25 @@ const insertCanon = function (params, db, callback) {
     const collection = db.collection('canon');
     // Insert some documents
     console.log(11, params)
-    collection.find({ name: params[0].name }).toArray(function (err, docs) {
-        assert.equal(err, null);
-        params[0].articleId = docs.length + 1;
+    // collection.find({ name: params.name }).toArray(function (err, docs) {
+    //     assert.equal(err, null);
 
-        if (params.length === 1) {
-            collection.insertOne(params[0], function (err, result) {
+    //     if (params.length === 1) {
+            collection.insertOne(params, function (err, result) {
                 assert.equal(err, null);
                 console.log("Inserted 3 documents into the collection");
                 callback(result);
             });
-        } else {
-            collection.insertMany(params, function (err, result) {
-                assert.equal(err, null);
-                // assert.equal(3, result.result.n);
-                // assert.equal(3, result.ops.length);
-                console.log("Inserted 3 documents into the collection");
-                callback(result);
-            });
-        }
-    });
+        // } else {
+        //     collection.insertMany(params, function (err, result) {
+        //         assert.equal(err, null);
+        //         // assert.equal(3, result.result.n);
+        //         // assert.equal(3, result.ops.length);
+        //         console.log("Inserted 3 documents into the collection");
+        //         callback(result);
+        //     });
+        // }
+    // });
 }
 
 const removeCanon = function (params, db, callback) {

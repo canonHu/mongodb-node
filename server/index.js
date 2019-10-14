@@ -51,7 +51,7 @@ const canonDbName = 'canonhome'
 //设置跨域访问
 app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
     res.header("X-Powered-By", ' 3.2.1');
     res.header("Content-Type", "application/json;charset=utf-8");
@@ -100,11 +100,21 @@ app.all('/list', (req, res) => {
     });
 });
 
-app.all('/save',function(request,response){
-    console.log(111, request.body)
-    // var name=request.body.name;
-    // var data={ "success":true, "data": { "name":"hujianeng", "value":name } };
-    // response.json(data);
+app.all('/save',function(req, res, next){
+    const arr = Object.keys(req.body);
+    
+    if (arr.length) {
+        addCanonData(req.body, () => {
+            res.json({
+                success: true,
+                data: {a: 111}
+            })
+        });
+    } else {
+        res.json({
+            success: true
+        })
+    }
 });
 
 /**
