@@ -13,6 +13,7 @@
     "mongodb": "^3.1.0"
   },
   "devDependencies": {
+    "compression": "^1.7.4",
     "express": "^4.16.3",
     "formidable": "^1.2.1",
     "loadtest": "^3.0.8",

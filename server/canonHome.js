@@ -36,7 +36,6 @@ const insertCanon = function (params, db, callback) {
     // Get the documents collection
     const collection = db.collection('canon');
     // Insert some documents
-    console.log(11, params)
     // collection.find({ name: params.name }).toArray(function (err, docs) {
     //     assert.equal(err, null);
 
@@ -81,7 +80,6 @@ const indexCanon = function (params, db, callback) {
         params,
         null,
         function (err, results) {
-            console.log(results);
             callback();
         }
     );
