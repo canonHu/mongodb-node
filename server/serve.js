@@ -100,18 +100,18 @@ app.all('/save',function(req, res, next){
     const arr = Object.keys(req.body);
     
     res.status(200);
-    // if (arr.length) {
+    if (arr.length) {
         addCanonData(req.body, () => {
             res.json({
                 success: true,
                 data: {a: 111}
             })
         });
-    // } else {
-    //     res.json({
-    //         success: true
-    //     })
-    // }
+    } else {
+        res.json({
+            success: true
+        })
+    }
 });
 
 app.all('/delete', (req, res) => {
