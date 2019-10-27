@@ -58,21 +58,25 @@ const insertCanon = function (params, db, callback) {
 }
 
 const removeCanon = function (params, db, callback) {
+    const id = parseInt(params.id, 10)
     // Get the documents collection
     const collection = db.collection('canon');
     // Delete document where a is 3
-    if (params.length === 1) {
-        collection.deleteOne(params[0], function (err, result) {
-            assert.equal(err, null);
-            assert.equal(1, result.result.n);
-            callback(result);
-        });
-    } else {
-        collection.deleteMany(params, function (err, result) {
-            assert.equal(err, null);
-            callback(result);
-        });
-    }
+    // collection.find({ id: params.id }).toArray(function (err, docs) {
+        // assert.equal(err, null);
+        // if (params.length === 1) {
+            collection.deleteOne({ id }, function (err, result) {
+                assert.equal(err, null);
+                assert.equal(1, result.result.n);
+                callback(result);
+            });
+        // } else {
+            // collection.deleteMany(params.id, function (err, result) {
+            //     assert.equal(err, null);
+            //     callback(result);
+            // });
+        // }
+    // })
 }
 
 const indexCanon = function (params, db, callback) {
